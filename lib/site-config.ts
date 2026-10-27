@@ -8,3 +8,7 @@
 //   11  = código de área sin el 0
 //   22334455 = número sin el 15
 export const WHATSAPP_NUMERO = "5491123981879"
+
+// MINUTOS_INACTIVIDAD: si el panel de gestión queda sin uso este tiempo,
+// la sesión se cierra sola. Un minuto antes aparece un aviso para seguir conectada.
+export const MINUTOS_INACTIVIDAD = 15

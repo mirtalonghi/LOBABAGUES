@@ -3,6 +3,7 @@ import { redirect } from "next/navigation"
 
 import { getProductosAdmin } from "@/app/actions/products"
 import { ProductManager } from "@/components/admin/product-manager"
+import { InactivityLogout } from "@/components/admin/inactivity-logout"
 import { SignOutButton } from "@/components/admin/sign-out-button"
 import { auth } from "@/lib/auth"
 
@@ -32,6 +33,7 @@ export default async function AdminPage() {
       </header>
 
       <ProductManager productos={productos} />
+      <InactivityLogout />
     </main>
   )
 }
