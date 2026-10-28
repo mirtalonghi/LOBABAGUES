@@ -16,6 +16,8 @@ import { MINUTOS_INACTIVIDAD } from "@/lib/site-config"
 const LIMITE_MS = MINUTOS_INACTIVIDAD * 60 * 1000
 const AVISO_MS = 60 * 1000
 const CLAVE = "loba-admin-ultima-actividad"
+// Mientras se usa el panel, cada 2 minutos se renueva la sesión en el servidor
+const RENOVAR_MS = 2 * 60 * 1000
 const EVENTOS = ["pointerdown", "pointermove", "keydown", "scroll", "touchstart", "wheel"] as const
 
 function leerUltima(): number {
@@ -40,7 +42,23 @@ export function InactivityLogout() {
   const ultima = useRef<number>(Date.now())
   const cerrando = useRef(false)
   const avisoVisible = useRef(false)
+  const ultimaRenovacion = useRef<number>(Date.now())
   const [restante, setRestante] = useState<number | null>(null)
+
+  const renovarSesion = useCallback(async () => {
+    ultimaRenovacion.current = Date.now()
+    try {
+      const { data } = await authClient.getSession()
+      // Si el servidor ya la dio por vencida, se sale del panel
+      if (!data?.session) {
+        cerrando.current = true
+        router.replace("/sign-in?motivo=inactividad")
+        router.refresh()
+      }
+    } catch {
+      /* sin conexión: se vuelve a intentar con la próxima actividad */
+    }
+  }, [router])
 
   const registrarActividad = useCallback(() => {
     const ahora = Date.now()
@@ -48,7 +66,8 @@ export function InactivityLogout() {
     if (ahora - ultima.current < 5000) return
     ultima.current = ahora
     guardarUltima(ahora)
-  }, [])
+    if (ahora - ultimaRenovacion.current > RENOVAR_MS) void renovarSesion()
+  }, [renovarSesion])
 
   const seguirConectada = useCallback(() => {
     const ahora = Date.now()
@@ -56,7 +75,8 @@ export function InactivityLogout() {
     guardarUltima(ahora)
     avisoVisible.current = false
     setRestante(null)
-  }, [])
+    void renovarSesion()
+  }, [renovarSesion])
 
   const cerrarSesion = useCallback(async () => {
     if (cerrando.current) return

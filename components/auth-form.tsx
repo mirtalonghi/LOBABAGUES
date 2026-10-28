@@ -101,7 +101,14 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
           />
           {esRegistro ? (
             <span className="text-[11px] text-muted-foreground">Mínimo 8 caracteres.</span>
-          ) : null}
+          ) : (
+            <Link
+              href="/olvide-contrasena"
+              className="self-end text-xs text-primary underline-offset-4 hover:underline"
+            >
+              ¿Olvidaste tu contraseña?
+            </Link>
+          )}
         </label>
 
         {error ? (
@@ -109,9 +116,13 @@ export function AuthForm({ mode }: { mode: "sign-in" | "sign-up" }) {
             <p className="text-sm text-destructive">{error}</p>
             {!esRegistro ? (
               <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
-                {"Si es tu primera vez, todavía no tenés una cuenta creada. "}
+                {"¿No recordás la contraseña? "}
+                <Link href="/olvide-contrasena" className="text-primary underline-offset-4 hover:underline">
+                  Recuperala acá
+                </Link>
+                {". Si es tu primera vez, "}
                 <Link href="/sign-up" className="text-primary underline-offset-4 hover:underline">
-                  Creá tu cuenta acá
+                  creá tu cuenta
                 </Link>
                 {"."}
               </p>
