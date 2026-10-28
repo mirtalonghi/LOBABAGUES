@@ -44,6 +44,9 @@ export const auth = betterAuth({
     ...(process.env.NODE_ENV === "production"
       ? [
           ...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : []),
+          // Vistas previas de ramas: Vercel completa VERCEL_BRANCH_URL con la dirección
+          // de la rama (loba-bagues-git-<rama>-mirtas-projects.vercel.app)
+          ...(process.env.VERCEL_BRANCH_URL ? [`https://${process.env.VERCEL_BRANCH_URL}`] : []),
           ...(process.env.VERCEL_PROJECT_PRODUCTION_URL
             ? [`https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`]
             : []),
