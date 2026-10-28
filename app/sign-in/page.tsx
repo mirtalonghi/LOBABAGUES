@@ -1,16 +1,15 @@
-import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 
 import { AuthForm } from "@/components/auth-form"
-import { auth } from "@/lib/auth"
+import { getSesionAdmin } from "@/lib/admin"
 
 export default async function SignInPage({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (session?.user) redirect("/admin")
+  const { session, esAdmin } = await getSesionAdmin()
+  if (session?.user && esAdmin) redirect("/admin")
 
   const { motivo } = await searchParams
   const porInactividad = motivo === "inactividad"

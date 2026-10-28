@@ -1,19 +1,30 @@
-import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 
 import { getProductosAdmin } from "@/app/actions/products"
 import { ProductManager } from "@/components/admin/product-manager"
 import { InactivityLogout } from "@/components/admin/inactivity-logout"
 import { SignOutButton } from "@/components/admin/sign-out-button"
-import { auth } from "@/lib/auth"
+import { getSesionAdmin } from "@/lib/admin"
 
 export const metadata = {
   title: "Panel de gestión | LOBA BAGUES",
 }
 
 export default async function AdminPage() {
-  const session = await auth.api.getSession({ headers: await headers() })
+  const { session, esAdmin } = await getSesionAdmin()
   if (!session?.user) redirect("/sign-in")
+
+  if (!esAdmin) {
+    return (
+      <main className="mx-auto flex min-h-[60vh] w-full max-w-md flex-col items-center justify-center gap-4 px-4 py-16 text-center">
+        <h1 className="font-serif text-2xl text-foreground">Sin permiso</h1>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          La cuenta {session.user.email} no está autorizada para el panel de gestión.
+        </p>
+        <SignOutButton />
+      </main>
+    )
+  }
 
   const productos = await getProductosAdmin()
 

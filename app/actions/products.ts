@@ -1,19 +1,15 @@
 "use server"
 
 import { and, asc, desc, eq, gt } from "drizzle-orm"
-import { headers } from "next/headers"
 import { revalidatePath } from "next/cache"
 
-import { auth } from "@/lib/auth"
+import { requireAdmin } from "@/lib/admin"
 import { db } from "@/lib/db"
 import { products } from "@/lib/db/schema"
 import { mapProducto, slugify, type Product } from "@/lib/products"
 
-async function requireSession() {
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (!session?.user) throw new Error("No autorizado")
-  return session
-}
+// Solo cuentas autorizadas (lib/admin-emails.ts) pueden leer o modificar desde el panel
+const requireSession = requireAdmin
 
 /* ---------- Lectura pública ---------- */
 

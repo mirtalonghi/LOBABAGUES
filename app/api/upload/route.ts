@@ -1,15 +1,14 @@
 import { put } from "@vercel/blob"
-import { headers } from "next/headers"
 import { type NextRequest, NextResponse } from "next/server"
 
-import { auth } from "@/lib/auth"
+import { getSesionAdmin } from "@/lib/admin"
 
 const MAX_BYTES = 5 * 1024 * 1024 // 5 MB
 const TIPOS_OK = ["image/jpeg", "image/png", "image/webp", "image/avif"]
 
 export async function POST(request: NextRequest) {
-  const session = await auth.api.getSession({ headers: await headers() })
-  if (!session?.user) {
+  const { session, esAdmin } = await getSesionAdmin()
+  if (!session?.user || !esAdmin) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 })
   }
 

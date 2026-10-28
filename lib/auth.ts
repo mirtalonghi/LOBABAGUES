@@ -1,4 +1,7 @@
 import { betterAuth } from "better-auth"
+import { APIError } from "better-auth/api"
+
+import { esEmailAdmin } from "@/lib/admin-emails"
 import { pool } from "@/lib/db"
 
 export const auth = betterAuth({
@@ -13,6 +16,20 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,
+  },
+  // Solo los mails de lib/admin-emails.ts pueden crear una cuenta
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          if (!esEmailAdmin(user.email)) {
+            throw new APIError("FORBIDDEN", {
+              message: "Este mail no está autorizado para el panel de gestión.",
+            })
+          }
+        },
+      },
+    },
   },
   trustedOrigins: [
     ...(process.env.NODE_ENV === "development"
