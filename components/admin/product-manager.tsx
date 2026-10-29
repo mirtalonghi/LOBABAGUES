@@ -65,10 +65,13 @@ export function ProductManager({ productos }: { productos: Product[] }) {
             : "scroll-mt-4"
         }
       >
+        {/* La key hace que el formulario se cree de nuevo para cada producto.
+            Sin ella, React reutilizaba el formulario anterior y categoría, stock
+            y foto quedaban con valores viejos (y se guardaban mal). */}
         {editando ? (
-          <ProductForm producto={editando} onDone={() => setEditando(null)} />
+          <ProductForm key={`editar-${editando.id}`} producto={editando} onDone={() => setEditando(null)} />
         ) : (
-          <ProductForm />
+          <ProductForm key="nuevo" />
         )}
       </div>
 
