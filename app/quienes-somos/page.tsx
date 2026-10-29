@@ -15,7 +15,7 @@ export default function QuienesSomosPage() {
 
       <div className="mt-10 overflow-hidden rounded-lg border border-border">
         <Image
-          src="/image/carousel2.png"
+          src="/image/Producto-8.jpg"
           alt="Productos de la línea LOBA BAGUES"
           width={1200}
           height={600}
